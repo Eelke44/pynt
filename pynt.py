@@ -298,7 +298,7 @@ class Pynt():
     def spawnBottle(self, loc: BarLoc):
         w, h = self.canvas.get_size()
         if loc == BarLoc.BAR:
-            bottle = Bottle((w,h-self.rand.randint(350, 425)), self.bottleSize, self)
+            bottle = Bottle((w,h-self.rand.randint(int(0.405*h), int(0.491*h))), self.bottleSize, self)
             binaryInsert(self.bottles[BarLoc.BAR], bottle, lambda x: x.loc[1])
 
 
