@@ -25,6 +25,7 @@ CLOSED_BOTTLE_FILE = "closed_bottle.png"
 MENU_BOTTLE_FILE = "menu_bottle.png"
 BOTTLE_CAP_FILE = "bottle_cap.png"
 BAR_FILE = "bar.png"
+ARCH_FILE = "arch.png"
 
 # Events
 BEER_SPAWN_EVENT = 0

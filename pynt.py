@@ -6,6 +6,7 @@ from sound import Sound
 from barLocation import BarLoc
 from drawable import Drawable
 from bar import Bar
+from arch import Arch
 from bottle import Bottle
 from menuBottle import MenuBottle
 from cap import Cap
@@ -149,7 +150,7 @@ class Pynt():
         self.genMenuButtons(self.canvas)
         self.genGameEndedButtons(self.canvas)
         self.menuDrawables: list[Drawable] = self.menuButtons
-        self.playingDrawables: list[Drawable] = [Bar(self.canvas.get_size())]
+        self.playingDrawables: list[Drawable] = [Bar(self.canvas.get_size()), Arch(self.canvas.get_size())]
         self.gameEndedDrawables: list[Drawable] = self.gameEndedButtons
 
 
