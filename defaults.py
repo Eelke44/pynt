@@ -43,3 +43,4 @@ TITLE = "PYNT"
 WINDOW_CAPTION = "beer"
 RANDOM_SEED = "beer"
 FPS = 60    # Framerate and physics update rate are identical
+HIGH_SCORE_PATH = path.join(ROOT_DIR, "high_score.txt")

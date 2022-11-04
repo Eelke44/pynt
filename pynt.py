@@ -28,6 +28,7 @@ class Pynt():
         self.trays = []
         self.caps: list[Cap] = []
         self.score = 0
+        self.highScore = self.readHighScore()
         self.menuBeerSpawnRate = 10                         # Beers/second
         self.initMenuBottleSpeed = 60                       # Pixels/second
         self.initSlideSpeed = self.slideSpeed = 100         # Pixels/second of bottles sliding on the bar
@@ -64,33 +65,46 @@ class Pynt():
         self.playing = False
         while self.running:
             self.handleEvents()
-            if self.playing:
-                self.canvas.blit(self.gameBG, (0, 0))
-                for cap in self.caps:
-                    cap.draw(self.canvas)
-                for surf in self.playingDrawables:
-                    surf.draw(self.canvas)
-                for loc in self.bottles.values():
-                    for bottle in loc:
-                        bottle.draw(self.canvas)
-                if self.gameEnded:  # Replay?
-                    for surf in self.gameEndedDrawables:
-                        surf.draw(self.canvas)
-                self.drawScore()
-                self.slideBottles()
-                self.moveCaps()
-            else:                   # Menu
-                self.canvas.blit(self.menuBG, (0, 0))
-                for bottle in self.menuBottles:
-                    bottle.draw(self.canvas)
-                self.canvas.blit(self.menuFG, (0, 0))
-                for surf in self.menuDrawables:
-                    surf.draw(self.canvas)
-                self.drawMainText(TITLE, (0,0,0))
+            if self.playing:    # In game
+                self.drawGame()
+                self.updateGamePhysics()
+            else:               # Menu
+                self.drawMenu()
                 self.moveMenuBottles()
             pg.display.update()
             self.clock.tick(FPS)
         pg.quit()
+
+
+    def drawGame(self):
+        self.canvas.blit(self.gameBG, (0, 0))
+        for cap in self.caps:
+            cap.draw(self.canvas)
+        for surf in self.playingDrawables:
+            surf.draw(self.canvas)
+        for loc in self.bottles.values():
+            for bottle in loc:
+                bottle.draw(self.canvas)
+        if self.gameEnded:  # Replay?
+            for surf in self.gameEndedDrawables:
+                surf.draw(self.canvas)
+        self.drawHighScore()
+        self.drawScore()
+    
+
+    def drawMenu(self):
+        self.canvas.blit(self.menuBG, (0, 0))
+        for bottle in self.menuBottles:
+            bottle.draw(self.canvas)
+        self.canvas.blit(self.menuFG, (0, 0))
+        for surf in self.menuDrawables:
+            surf.draw(self.canvas)
+        self.drawMainText(TITLE, (0,0,0))
+
+
+    def updateGamePhysics(self):
+        self.slideBottles()
+        self.moveCaps()
 
 
     # Handle the events of 1 game loop
@@ -148,6 +162,16 @@ class Pynt():
         self.canvas.blit(scoreSurf, scoreRect)
 
 
+    def drawHighScore(self):
+        font = pg.font.Font(DEFAULT_FONT_LOC, SMALL_FONT_SIZE)
+        scoreSurf = font.render(f"High-score: {self.highScore}", False, (200,200,200))
+        scoreRect = scoreSurf.get_rect()
+        w = self.canvas.get_size()[0]
+        margin = scoreRect.height//2
+        scoreRect.topright = w - margin, margin
+        self.canvas.blit(scoreSurf, scoreRect)
+
+
     def initBottles(self):
         self.bottles: dict[BarLoc, list[Bottle]] = {
             BarLoc.BAR: [],
@@ -160,6 +184,20 @@ class Pynt():
         pg.time.set_timer(BEER_SPAWN_EVENT, 0)
         pg.time.set_timer(BEER_INC_EVENT, 0)
         self.gameEnded = True
+        self.handleHighScore()
+    
+
+    def readHighScore(self):
+        if not path.isfile(HIGH_SCORE_PATH): return 0
+        with open(HIGH_SCORE_PATH, 'r') as highScoreFile:
+            return int(highScoreFile.read())
+    
+
+    # Updates the high score if it was breached
+    def handleHighScore(self):
+        self.highScore = max(self.highScore, self.score)
+        with open(HIGH_SCORE_PATH, 'w') as highScoreFile:
+            highScoreFile.write(str(self.highScore))
 
 
     def slideBottles(self):
