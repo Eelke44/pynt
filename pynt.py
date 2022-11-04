@@ -196,14 +196,15 @@ class Pynt():
 
     # Updates the high score if it was breached
     def handleHighScore(self):
-        self.highScore = max(self.highScore, self.score)
+        if self.score <= self.highScore: return
+        self.highScore = self.score
         with open(HIGH_SCORE_PATH, 'w') as highScoreFile:
             highScoreFile.write(str(self.highScore))
 
 
     def slideBottles(self):
         for bottle in self.bottles[BarLoc.BAR]:
-            bottle.move((-self.clock.get_time()/1000*bottle.slideSpeed,0))
+            bottle.move((-self.clock.get_time()*0.001*bottle.slideSpeed,0))
     
 
     def moveCaps(self):

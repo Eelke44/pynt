@@ -1,3 +1,4 @@
+# Returns whether an item was removed
 def binaryRemove(list, item, selectFunc):
     l = 0
     r = len(list)
